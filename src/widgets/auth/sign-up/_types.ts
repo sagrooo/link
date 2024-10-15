@@ -18,7 +18,11 @@ export const FormValues = z
       .string()
       .min(8, "Пароль должен быть 8 символов и более")
       .max(100, "Пароль должен быть не более 100 символов"),
-    email: z.string(),
+    email: z
+      .string()
+      .email("Invalid email format")
+      .optional()
+      .or(z.literal("")),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Пароли не совпадают",

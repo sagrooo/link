@@ -4,9 +4,9 @@ import { Redirect } from "react-router";
 import { useStore } from "@/shared/hooks";
 import { GoogleAuth } from "@/widgets/auth/google-auth";
 
-export const GoogleAuthPage = observer(() => {
+export const GoogleAuthConfigurePage = observer(() => {
   const { authStore } = useStore();
-  if (authStore.username === null) {
+  if (authStore.token === null) {
     return <Redirect to={"/auth/sign-in"} />;
   }
   return <GoogleAuth />;

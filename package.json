@@ -7,7 +7,7 @@
     "start:supabase": "npx supabase start",
     "start:functions": "npx supabase functions serve --env-file ./supabase/.env",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -43,7 +43,7 @@
     "globals": "^15.9.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^8.7.0",
+    "typescript-eslint": "^8.9.0",
     "vite": "^5.4.8"
   }
 }

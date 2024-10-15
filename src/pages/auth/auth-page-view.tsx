@@ -3,10 +3,12 @@ import { Redirect } from "react-router";
 import { Route, Switch } from "react-router-dom";
 
 import { ConfigureTwoFactorPage } from "@/pages/auth/children/configure-two-factor";
-import { GoogleAuthPage } from "@/pages/auth/children/google-auth";
-import { PgpPassphrasePage } from "@/pages/auth/children/pgp-passphrase";
+import { GoogleAuthConfigurePage } from "@/pages/auth/children/google-auth-configure-page";
+import { PgpAuthConfigurePage } from "@/pages/auth/children/pgp-auth-configure-page";
 import { SignInPage } from "@/pages/auth/children/sign-in";
 import { SignUpPage } from "@/pages/auth/children/sign-up";
+import { TwoFactorAuthPage } from "@/pages/auth/children/two-factor-auth";
+import { ROUTES } from "@/shared/_constants.ts";
 import { useStore } from "@/shared/hooks";
 
 import { AuthLogo, Container, Content, ShieldLogo } from "./auth-page.styles";
@@ -26,19 +28,29 @@ export const AuthPage = observer(() => {
           <Switch>
             <Route
               exact
-              path="/auth"
-              render={() => <Redirect to="/auth/sign-in" />}
+              path={ROUTES.auth}
+              render={() => <Redirect to={ROUTES.signIn} />}
             />
-            <Route path="/auth/sign-in" component={SignInPage} />
-            <Route path="/auth/sign-up" component={SignUpPage} />
+            <Route path={ROUTES.signIn} component={SignInPage} />
+            <Route path={ROUTES.signUp} component={SignUpPage} />
+
             <Route
-              path="/auth/two-factor/configure"
+              path={ROUTES.configureTwoFactor}
               component={ConfigureTwoFactorPage}
             />
-            <Route path="/auth/two-factor/google" component={GoogleAuthPage} />
+
             <Route
-              path="/auth/two-factor/pgp-passphrase"
-              component={PgpPassphrasePage}
+              path={ROUTES.googleAuthConfigure}
+              component={GoogleAuthConfigurePage}
+            />
+            <Route
+              path={ROUTES.pgpAuthConfigure}
+              component={PgpAuthConfigurePage}
+            />
+
+            <Route
+              path={ROUTES.pgpAuthConfigure}
+              component={TwoFactorAuthPage}
             />
           </Switch>
         </Content>

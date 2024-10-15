@@ -6,11 +6,11 @@ import { QrScanWidget } from "@/widgets/auth/qr-scan";
 import { SavePgpAuthWidget } from "@/widgets/auth/save-pgp-auth";
 
 import { TabsView } from "./_components/tabs";
-import { ConfigureStep, Tab } from "./_types";
+import { Tab } from "./_types.ts";
 import { Container } from "./configure-two-factor-widget.styles";
 
 export const ConfigureTwoFactorWidget = () => {
-  const [step, setStep] = useState<ConfigureStep>("1");
+  const [step, setStep] = useState<ConfigureStep>(ConfigureStep.SelectType);
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Google);
 
   const handleSubmit = () => {

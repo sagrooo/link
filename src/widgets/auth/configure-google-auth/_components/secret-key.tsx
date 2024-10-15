@@ -31,19 +31,21 @@ const SecretText = styled(Text)`
 `;
 
 type Props = {
-  secret: string;
+  secret?: string;
 };
 
 export const SecretKey = ({ secret }: Props) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
-    copyToClipboard(secret);
-    setIsCopied(true);
+    if (secret) {
+      copyToClipboard(secret);
+      setIsCopied(true);
+    }
   };
 
   useEffect(() => {
-    let timeout;
+    let timeout: NodeJS.Timeout;
     if (isCopied) {
       timeout = setTimeout(() => {
         setIsCopied(false);

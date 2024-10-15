@@ -4,6 +4,11 @@ export type SignUpParams = {
   email?: string;
 };
 
+export type LoginParams = {
+  username: string;
+  password: string;
+};
+
 export enum TwoFactorType {
   Google = "google",
   Pgp = "pgp",
@@ -15,9 +20,4 @@ export type User = {
   email: string | null;
   secret: string | null;
   challenges: string | null;
-};
-
-export type GenerateOtpSecretResponse = {
-  otpauthUrl: string;
-  secret: string;
 };

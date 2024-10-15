@@ -1,36 +1,23 @@
-import { useLayoutEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { useStore } from "@/shared/hooks";
 import { Button } from "@/shared/ui/button";
 import { FormField } from "@/shared/ui/form-field";
 import { PasswordInput } from "@/shared/ui/inputs";
-import { FormValues } from "@/widgets/auth/pgp-passphrase/_types";
-import {
-  StyledForm,
-  StyledText,
-} from "@/widgets/auth/pgp-passphrase/pgp-passphrase-widget.styles";
+
+import { FormValues } from "./_types.ts";
+import { StyledForm, StyledText } from "./pgp-passphrase-widget.styles";
 
 export const PgpPassphraseWidget = () => {
-  const { authStore } = useStore<FormValues>();
+  const { authStore } = useStore();
   const {
     handleSubmit,
     control,
     formState: { isValid },
-  } = useForm();
-
-  useLayoutEffect(() => {
-    const checkIsEncrypted = async () => {
-      const isEncrypted = authStore.isPrivateKeyEncrypted();
-      if (isEncrypted) {
-        void authStore.authorizeUser();
-      }
-    };
-    void checkIsEncrypted();
-  }, []);
+  } = useForm<FormValues>();
 
   const handleFormSubmit = handleSubmit(({ passphrase }: FormValues) => {
-    void authStore.verifyPGPKey(passphrase);
+    // void authStore.verifyPGPKey(passphrase);
   });
 
   return (

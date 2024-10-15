@@ -2,12 +2,12 @@ import { observer } from "mobx-react";
 import { Redirect } from "react-router";
 
 import { useStore } from "@/shared/hooks";
-import { PgpPassphraseWidget } from "@/widgets/auth/pgp-passphrase";
 
-export const PgpPassphrasePage = observer(() => {
+export const TwoFactorAuthPage = observer(() => {
   const { authStore } = useStore();
-  if (authStore.username === null) {
+  if (!authStore.user) {
     return <Redirect to="/auth/sign-in" />;
   }
-  return <PgpPassphraseWidget />;
+
+  return null;
 });

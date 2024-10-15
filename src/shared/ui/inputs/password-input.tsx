@@ -1,5 +1,5 @@
 import { Eye, EyeSlash } from "iconsax-react";
-import { memo, useCallback, useState } from "react";
+import { HTMLProps, memo, useCallback, useState } from "react";
 import styled from "styled-components";
 
 import { useThemeContext } from "@/shared/theme";
@@ -21,7 +21,9 @@ const TypeToggleButton = styled.button`
   transform: translateY(-50%);
 `;
 
-export const PasswordInput = memo(function PasswordInput(props) {
+export const PasswordInput = memo(function PasswordInput(
+  props: HTMLProps<HTMLInputElement>,
+) {
   const [isShowPass, setIsShowPass] = useState(false);
   const [theme] = useThemeContext();
 

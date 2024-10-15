@@ -1,7 +1,9 @@
 import { observer } from "mobx-react";
 import { ChangeEvent, useState } from "react";
-import { Redirect } from "react-router";
+import { useForm } from "react-hook-form";
+import { useHistory } from "react-router";
 
+import { ROUTES } from "@/shared/_constants.ts";
 import { useStore } from "@/shared/hooks";
 import { Button } from "@/shared/ui/button";
 import { Textarea } from "@/shared/ui/inputs/textarea";
@@ -11,19 +13,26 @@ import { Container } from "./save-pgp-auth-widget.styles";
 
 export const SavePgpAuthWidget = observer(() => {
   const { authStore } = useStore();
-  const [publikKey, setPublicKey] = useState<string>("");
+  const history = useHistory();
+  const [publicKey, setPublicKey] = useState<string>("");
 
-  const handleSubmit = async () => {
-    void authStore.addPGPKey(publikKey);
+  const { handleSubmit, control } = useForm({
+    defaultValues: {
+      passphrase: "",
+    },
+  });
+
+  const handleSubmita = async () => {
+    void authStore.addPGPKey(publicKey);
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setPublicKey(e.target.value);
   };
 
-  if (!authStore.username) {
-    return <Redirect to={"/auth/sign-in"} />;
-  }
+  const handleGoToPassphrase = () => {
+    history.push(ROUTES.pgpAuthConfigure);
+  };
 
   return (
     <Container>
@@ -34,7 +43,7 @@ export const SavePgpAuthWidget = observer(() => {
         rows={6}
       />
       <Button
-        disabled={authStore.isLoading || publikKey === ""}
+        disabled={authStore.isLoading || publicKey === ""}
         isLoading={authStore.isLoading}
         onClick={handleSubmit}
       >

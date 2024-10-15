@@ -7,8 +7,9 @@ import { ConfigureTwoFactorWidget } from "@/widgets/auth/configure-two-factor";
 export const ConfigureTwoFactorPage = observer(() => {
   const { authStore } = useStore();
 
-  if (authStore.username === null) {
+  if (authStore.token === null) {
     return <Redirect to={"/auth/sign-in"} />;
   }
+
   return <ConfigureTwoFactorWidget />;
 });

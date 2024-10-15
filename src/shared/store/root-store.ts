@@ -1,18 +1,29 @@
 import { RouterStore } from "@ibm/mobx-react-router";
 
-import { GoogleAuthStore } from "@/shared/store/google-auth-store/index.ts";
+import {
+  GoogleAuthStore,
+  ImplGoogleAuthStore,
+} from "@/shared/store/google-auth-store";
+import { ImplPgpAuthStore, PgpAuthStore } from "@/shared/store/pgp-auth-store";
 
 import { AuthStore } from "./auth-store";
 
 export class RootStore {
   authStore: AuthStore;
 
+  googleAuthStore: ImplGoogleAuthStore;
+
+  pgpAuthStore: ImplPgpAuthStore;
+
   routingStore: RouterStore;
 
-  constructor(private readonly routingStore: RouterStore) {
-    this.routingStore = routingStore;
-    this.authStore = new AuthStore(routingStore);
-  }
+  constructor(readonly router: RouterStore) {
+    this.routingStore = router;
 
-  newGoogleAuthStore = () => new GoogleAuthStore(this.routingStore);
+    this.authStore = new AuthStore(router);
+
+    this.googleAuthStore = new GoogleAuthStore();
+
+    this.pgpAuthStore = new PgpAuthStore();
+  }
 }

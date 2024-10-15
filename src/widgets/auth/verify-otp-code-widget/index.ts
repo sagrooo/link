@@ -1,1 +1,1 @@
-export { TwoFactorAuthWidget } from "./two-factor-auth-widget";
+export { VerifyOtpCodeWidget } from "./verify-otp-code-widget.tsx";

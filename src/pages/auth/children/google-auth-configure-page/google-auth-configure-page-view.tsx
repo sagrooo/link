@@ -1,13 +1,16 @@
 import { observer } from "mobx-react";
 import { Redirect } from "react-router";
 
+import { ROUTES } from "@/shared/_constants.ts";
 import { useStore } from "@/shared/hooks";
-import { GoogleAuth } from "@/widgets/auth/google-auth";
+import { ConfigureGoogleAuthWidget } from "@/widgets/auth/configure-google-auth";
 
 export const GoogleAuthConfigurePage = observer(() => {
   const { authStore } = useStore();
-  if (authStore.token === null) {
-    return <Redirect to={"/auth/sign-in"} />;
+
+  if (authStore.user === null) {
+    return <Redirect to={ROUTES.signIn} />;
   }
-  return <GoogleAuth />;
+
+  return <ConfigureGoogleAuthWidget />;
 });

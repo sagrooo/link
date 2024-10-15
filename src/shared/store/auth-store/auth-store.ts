@@ -1,11 +1,5 @@
+import { jwtDecode } from "jwt-decode";
 import { makeAutoObservable } from "mobx";
-import {
-  createCleartextMessage,
-  decryptKey,
-  generateKey,
-  readPrivateKey,
-  sign,
-} from "openpgp";
 
 import { RouterStore } from "@ibm/mobx-react-router";
 
@@ -13,31 +7,43 @@ import { ROUTES } from "@/shared/_constants.ts";
 import { functionsMapError } from "@/shared/lib/functions-map-error";
 import { supabase } from "@/shared/services/supabase-client";
 
-import { LoginParams, SignUpParams, TwoFactorType, User } from "./_types";
+import { JwtPayload, LoginParams, LoginResponse, SignUpParams } from "./_types";
 
 export class AuthStore {
-  isAuth = false;
-
   isLoading = false;
 
   error: string | null = null;
 
   token: string | null = null;
 
-  user: User | null = null;
+  isAuth = false;
 
   constructor(private routingStore: RouterStore) {
-    this.isAuth = Boolean(localStorage.getItem("isAuth"));
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      this.token = token;
+      this.isAuth = true;
+    }
 
     makeAutoObservable(this);
   }
 
-  logout = () => {
-    localStorage.removeItem("isAuth");
+  authenticateUser = () => {
+    if (this.token === null) {
+      return;
+    }
 
-    this.isAuth = false;
-    this.user = null;
+    localStorage.setItem("token", this.token);
+    this.isAuth = true;
+    this.routingStore.history.push(ROUTES.home);
+  };
+
+  logout = () => {
+    localStorage.removeItem("token");
+
     this.token = null;
+    this.isAuth = false;
 
     this.routingStore.history.push(ROUTES.signIn);
   };
@@ -47,7 +53,7 @@ export class AuthStore {
     this.isLoading = true;
 
     try {
-      const { data: user, error } = await supabase.functions.invoke<User>(
+      const { data, error } = await supabase.functions.invoke<LoginResponse>(
         "sign-in",
         {
           body: {
@@ -61,22 +67,17 @@ export class AuthStore {
         await functionsMapError(error);
       }
 
-      if (user === null) {
+      if (data === null) {
         return;
       }
 
-      this.user = user;
-      this.token = user.username;
-
-      const twoFactorType = user.twoFactorType;
-
-      const redirectUrl =
-        twoFactorType === TwoFactorType.Google
-          ? "/auth/two-factor/google"
-          : "/auth/two-factor/pgp-passphrase";
+      const { twoFactorType } = jwtDecode<JwtPayload>(data.token);
+      this.token = data.token;
 
       this.routingStore.history.push(
-        twoFactorType !== null ? redirectUrl : "/auth/two-factor/configure",
+        twoFactorType !== null
+          ? ROUTES.twoFactorPassphrase
+          : ROUTES.configureTwoFactor,
       );
     } catch (e) {
       throw e;
@@ -85,30 +86,24 @@ export class AuthStore {
     }
   };
 
-  signup = async ({ username, password, email }: SignUpParams) => {
+  signup = async ({ password, username, email }: SignUpParams) => {
     this.error = null;
     this.isLoading = true;
     try {
-      const { data: user, error } = await supabase.functions.invoke<User>(
-        "sign-up",
-        {
-          body: JSON.stringify({
-            username,
-            password,
-            email,
-          }),
-        },
-      );
+      const { error } = await supabase.functions.invoke<JwtPayload>("sign-up", {
+        body: JSON.stringify({
+          username,
+          password,
+          email,
+        }),
+      });
 
       if (error) {
         await functionsMapError(error);
-      }
 
-      if (user === null) {
         return;
       }
 
-      this.token = user.username;
       this.routingStore.history.push(ROUTES.configureTwoFactor);
     } catch (e) {
       throw e;
@@ -117,113 +112,29 @@ export class AuthStore {
     }
   };
 
-  authorizeUser = () => {
-    void this.fetchUser();
-    this.isAuth = true;
-    localStorage.setItem("isAuth", "true");
-    this.routingStore.history.push(ROUTES.home);
-  };
-
-  addPGPKey = async (passphrase: string) => {
+  checkAuth = async () => {
     this.isLoading = true;
     try {
-      const username = this.token;
-
-      const { privateKey, publicKey: secret } = await generateKey({
-        type: "rsa",
-        rsaBits: 2048,
-        userIDs: [{ name: username }],
-        passphrase,
-      });
-
-      const { error } = await supabase.functions.invoke("add-pgp-key", {
+      const { error } = await supabase.functions.invoke("check-auth", {
         body: JSON.stringify({
-          username,
-          secret,
+          token: this.token,
         }),
       });
 
       if (error) {
-        await functionsMapError(error);
-      }
-
-      localStorage.setItem("privateKey", privateKey);
-      this.authorizeUser();
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.isLoading = false;
-    }
-  };
-
-  verifyPGPKey = async (passphrase: string) => {
-    this.isLoading = true;
-    try {
-      const armoredKey = this.getPrivateKey;
-      if (!armoredKey) {
-        return;
-      }
-      await decryptKey({
-        privateKey: await readPrivateKey({ armoredKey }),
-        passphrase,
-      });
-
-      const signedChallenge = await sign({
-        message: await createCleartextMessage({ text: challenge }),
-        signingKeys: privateKey,
-      });
-
-      const { data: verifyData, error } = await supabase.functions.invoke(
-        "verifyChallenge",
-        {
-          body: JSON.stringify({ username, signedChallenge }),
-        },
-      );
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.isLoading = false;
-    }
-  };
-
-  fetchUser = async () => {
-    try {
-      const username = this.token;
-      if (!username) {
-        return;
-      }
-      const { data } = await supabase.functions.invoke("fetch-user", {
-        body: {
-          username,
-        },
-      });
-      if (data) {
-        this.user = data;
+        this.logout();
       }
     } catch (e) {
       throw e;
+    } finally {
+      this.isLoading = false;
     }
   };
 
-  isPrivateKeyEncrypted = async (): Promise<boolean | undefined> => {
-    const armoredKey = localStorage.getItem("privateKey");
-    if (!armoredKey) {
-      return;
+  get user() {
+    if (!this.token) {
+      return null;
     }
-    const { keyPacket } = await readPrivateKey({
-      armoredKey,
-    });
-
-    // @ts-ignore
-    return keyPacket.isEncrypted;
-  };
-
-  private get getPrivateKey() {
-    const armoredKey = localStorage.getItem("privateKey");
-    if (!armoredKey) {
-      return;
-    }
-
-    return armoredKey;
+    return jwtDecode<JwtPayload>(this.token);
   }
 }

@@ -1,14 +1,15 @@
 import styled, { css } from "styled-components";
 
 type Size = "s" | "m" | "l";
-type Bold = "skinny" | "normal" | "$bold";
+type Bold = "skinny" | "normal" | "bold";
 
 type Props = {
-  size?: Size;
-  bold?: Bold;
+  $size?: Size;
+  $bold?: Bold;
+  $align?: "left" | "center" | "right";
 };
 
-const $sizedVariant: Record<$size, string> = {
+const $sizedVariant: Record<Size, any> = {
   s: css`
     font-size: 12px;
     line-height: 150%;
@@ -23,7 +24,7 @@ const $sizedVariant: Record<$size, string> = {
   `,
 };
 
-const $boldVariant = {
+const $boldVariant: Record<Bold, any> = {
   skinny: css`
     font-weight: 400;
   `,
@@ -37,7 +38,8 @@ const $boldVariant = {
 
 export const Text = styled.span<Props>`
   font-size: 16px;
+  text-align: ${({ $align = "left" }) => $align};
 
-  ${({ $size = "m" }) => $sizedVariant[$size]}
-  ${({ $bold = "skinny" }) => $boldVariant[$bold]}
+  ${({ $size = "m" }) => $sizedVariant[$size]};
+  ${({ $bold = "skinny" }) => $boldVariant[$bold]};
 `;

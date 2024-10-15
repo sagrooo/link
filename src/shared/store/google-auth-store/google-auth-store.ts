@@ -1,11 +1,10 @@
 import { makeAutoObservable } from "mobx";
 
-import { RouterStore } from "@ibm/mobx-react-router";
-
 import { ROUTES } from "@/shared/_constants.ts";
 import { functionsMapError } from "@/shared/lib/functions-map-error.ts";
 import { supabase } from "@/shared/services/supabase-client.ts";
 import {
+  AuthStep,
   GenerateOtpResponse,
   ImplGoogleAuthStore,
 } from "@/shared/store/google-auth-store/_types.ts";
@@ -13,9 +12,11 @@ import {
 export class GoogleAuthStore implements ImplGoogleAuthStore {
   isLoading = false;
 
-  otp: GenerateOtpResponse | null = null;
+  otpModel: GenerateOtpResponse | null = null;
 
-  constructor(private readonly routingStore: RouterStore) {
+  step: AuthStep = AuthStep.ScanQr;
+
+  constructor() {
     makeAutoObservable(this);
   }
 
@@ -29,7 +30,7 @@ export class GoogleAuthStore implements ImplGoogleAuthStore {
         },
       });
       if (error === null) {
-        this.otp = data;
+        this.otpModel = data;
       }
     } catch (e) {
       throw e;
@@ -54,12 +55,17 @@ export class GoogleAuthStore implements ImplGoogleAuthStore {
         await functionsMapError(error);
       }
 
-      this.otp = null;
+      this.otpModel = null;
+      localStorage.removeItem("tempUsername");
       this.routingStore.push(ROUTES.signIn);
     } catch (e) {
       throw e;
     } finally {
       this.isLoading = false;
     }
+  };
+
+  goToVerify = () => {
+    this.step = AuthStep.Verify;
   };
 }

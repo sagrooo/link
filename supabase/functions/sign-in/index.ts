@@ -1,15 +1,18 @@
-import { corsHeaders } from "../_shared/cors";
-import { newResponse } from "../_shared/new-response";
-import { supabase } from "../_shared/supabase-client";
+import { corsHeaders } from "_shared/cors.ts";
+import { newResponse } from "_shared/new-response.ts";
+import { supabase } from "_shared/supabase-client.ts";
 
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod";
-import "jsr:@supabase/functions-js/edge-runtime.d";
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { create } from "https://deno.land/x/djwt/mod.ts";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import * as crypto from "node:crypto";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
+
+  const JWT_SECRET = Deno.env.get("JWT_SECRET");
 
   try {
     const { username, password } = await req.json();
@@ -36,19 +39,35 @@ Deno.serve(async (req) => {
       });
     }
 
-    delete user.password;
+    const payload = {
+      id: user.id,
+      username: user.username,
+      twoFactorType: user.twoFactorType,
+      secret: user.secret,
+      challenges: user.challenges,
+    };
 
-    const challenges = crypto.randomBytes(32).toString("hex");
+    if (user.twoFactorType === "pgp") {
+      const challenges = crypto.randomBytes(32).toString("hex");
+      payload.challenges = challenges;
 
-    const { error: insertError } = await supabase.from("challenges").insert({
-      username,
-      challenges,
-    });
+      const { error: insertError } = await supabase.from("challenges").insert({
+        username,
+        challenges,
+      });
+    }
 
-    console.log("challenge", insertError);
+    const key = await crypto.subtle.generateKey(
+      { name: "HMAC", hash: "SHA-512" },
+      true,
+      ["sign", "verify"],
+    );
+
+    const token = await create({ alg: "HS512", typ: "JWT" }, payload, key);
+
     return newResponse({
       status: 200,
-      body: { ...user, challenges },
+      body: { token },
     });
   } catch (error) {
     return newResponse({

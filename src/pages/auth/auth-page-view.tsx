@@ -15,8 +15,9 @@ import { AuthLogo, Container, Content, ShieldLogo } from "./auth-page.styles";
 
 export const AuthPage = observer(() => {
   const { authStore } = useStore();
+
   if (authStore.isAuth) {
-    return <Redirect to="/" />;
+    return <Redirect to={ROUTES.home} />;
   }
 
   return (
@@ -49,7 +50,7 @@ export const AuthPage = observer(() => {
             />
 
             <Route
-              path={ROUTES.pgpAuthConfigure}
+              path={ROUTES.twoFactorPassphrase}
               component={TwoFactorAuthPage}
             />
           </Switch>

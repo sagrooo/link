@@ -6,9 +6,9 @@ import { FormField } from "@/shared/ui/form-field";
 import { PasswordInput } from "@/shared/ui/inputs";
 
 import { FormValues } from "./_types.ts";
-import { StyledForm, StyledText } from "./pgp-passphrase-widget.styles";
+import { StyledForm, StyledText } from "./configure-pgp-auth-widget.styles";
 
-export const PgpPassphraseWidget = () => {
+export const ConfigurePgpAuthWidget = () => {
   const { authStore } = useStore();
   const {
     handleSubmit,

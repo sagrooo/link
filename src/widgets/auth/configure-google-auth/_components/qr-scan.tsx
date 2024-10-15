@@ -3,9 +3,9 @@ import { useEffect } from "react";
 
 import { GenerateOtpResponse } from "@/shared/store/google-auth-store/_types.ts";
 import { Button } from "@/shared/ui/button";
+import { CommonContainer } from "@/shared/ui/common-container.ts";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { Text } from "@/shared/ui/text";
-import { Container } from "@/widgets/auth/configure-google-auth-widget/configure-google-auth-widget.styles.ts";
 
 import { SecretKey } from "./secret-key";
 
@@ -21,8 +21,10 @@ export const QrScanWidget = ({ onGenerate, otp, onNextStep }: Props) => {
   }, []);
 
   return (
-    <Container>
-      <Text>Для продолжения необходимо сохранить сгенерированный ключ</Text>
+    <CommonContainer>
+      <Text $align={"center"}>
+        Для продолжения необходимо сохранить сгенерированный ключ
+      </Text>
       {otp?.otpauthUrl ? (
         <QRCodeSVG width={122} height={122} value={otp?.otpauthUrl} />
       ) : (
@@ -30,6 +32,6 @@ export const QrScanWidget = ({ onGenerate, otp, onNextStep }: Props) => {
       )}
       <SecretKey secret={otp?.secret} />
       <Button onClick={onNextStep}>Далее</Button>
-    </Container>
+    </CommonContainer>
   );
 };

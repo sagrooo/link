@@ -1,9 +1,9 @@
-import { corsHeaders } from "../_shared/cors";
-import { newResponse } from "../_shared/new-response";
-import { supabase } from "../_shared/supabase-client";
+import { corsHeaders } from "../_shared/cors.ts";
+import { newResponse } from "../_shared/new-response.ts";
+import { supabase } from "../_shared/supabase-client.ts";
 
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod";
-import "jsr:@supabase/functions-js/edge-runtime.d";
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -12,6 +12,13 @@ Deno.serve(async (req) => {
 
   try {
     const { username, password, email } = await req.json();
+
+    if (!username || !password) {
+      return newResponse({
+        status: 400,
+        body: { code: "missing_fields", message: "Missing fields" },
+      });
+    }
 
     const { data: existingUser, error: existingUserError } = await supabase
       .from("users")

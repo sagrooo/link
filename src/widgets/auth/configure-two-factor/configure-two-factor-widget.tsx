@@ -1,30 +1,25 @@
 import { useState } from "react";
+import { useHistory } from "react-router";
 
+import { ROUTES } from "@/shared/_constants.ts";
 import { Button } from "@/shared/ui/button";
 import { Text } from "@/shared/ui/text";
-import { QrScanWidget } from "@/widgets/auth/qr-scan";
-import { SavePgpAuthWidget } from "@/widgets/auth/save-pgp-auth";
 
 import { TabsView } from "./_components/tabs";
 import { Tab } from "./_types.ts";
 import { Container } from "./configure-two-factor-widget.styles";
 
 export const ConfigureTwoFactorWidget = () => {
-  const [step, setStep] = useState<ConfigureStep>(ConfigureStep.SelectType);
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Google);
+  const history = useHistory();
 
   const handleSubmit = () => {
-    setStep(ConfigureStep.SaveSecret);
+    history.push(
+      selectedTab === Tab.Google
+        ? ROUTES.googleAuthConfigure
+        : ROUTES.pgpAuthConfigure,
+    );
   };
-
-  if (step === ConfigureStep.SaveSecret) {
-    switch (selectedTab) {
-      case Tab.Google:
-        return <QrScanWidget />;
-      default:
-        return <SavePgpAuthWidget />;
-    }
-  }
 
   return (
     <Container>

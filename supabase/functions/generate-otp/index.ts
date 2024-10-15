@@ -1,7 +1,7 @@
-import { corsHeaders } from "../_shared/cors";
-import { newResponse } from "../_shared/new-response";
+import { corsHeaders } from "../_shared/cors.ts";
+import { newResponse } from "../_shared/new-response.ts";
 
-import "jsr:@supabase/functions-js/edge-runtime.d";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { authenticator } from "npm:otplib";
 
 Deno.serve(async (req) => {

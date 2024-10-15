@@ -9,15 +9,30 @@ export type LoginParams = {
   password: string;
 };
 
+export type LoginResponse = {
+  token: string;
+};
+
 export enum TwoFactorType {
   Google = "google",
   Pgp = "pgp",
 }
 
-export type User = {
+type BaseJwtPayload = {
   username: string;
-  twoFactorType: TwoFactorType | null;
   email: string | null;
-  secret: string | null;
   challenges: string | null;
+  expiresAt: string;
 };
+
+type PayloadWithTwoFactor = BaseJwtPayload & {
+  twoFactorType: TwoFactorType;
+  secret: string;
+};
+
+type PaylodWithoutTwoFactor = BaseJwtPayload & {
+  twoFactorType: null;
+  secret: null;
+};
+
+export type JwtPayload = PaylodWithoutTwoFactor | PayloadWithTwoFactor;

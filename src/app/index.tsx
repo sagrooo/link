@@ -21,7 +21,7 @@ const store = new RootStore(routingStore);
 export const App = () => {
   useEffect(() => {
     if (store.authStore.isAuth) {
-      void store.authStore.fetchUser();
+      // void store.authStore.fetchUser();
     }
   }, []);
 

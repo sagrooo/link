@@ -31,47 +31,47 @@ const SecretText = styled(Text)`
 `;
 
 type Props = {
-  secret?: string;
+    secret?: string;
 };
 
 export const SecretKey = ({ secret }: Props) => {
-  const [isCopied, setIsCopied] = useState(false);
+    const [isCopied, setIsCopied] = useState(false);
 
-  const handleCopy = () => {
-    if (secret) {
-      copyToClipboard(secret);
-      setIsCopied(true);
-    }
-  };
+    const handleCopy = () => {
+        if (secret) {
+            copyToClipboard(secret);
+            setIsCopied(true);
+        }
+    };
 
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (isCopied) {
-      timeout = setTimeout(() => {
-        setIsCopied(false);
-      }, 2000);
-    }
+    useEffect(() => {
+        let timeout: NodeJS.Timeout;
+        if (isCopied) {
+            timeout = setTimeout(() => {
+                setIsCopied(false);
+            }, 2000);
+        }
 
-    return () => clearTimeout(timeout);
-  }, [isCopied]);
+        return () => clearTimeout(timeout);
+    }, [isCopied]);
 
-  return (
-    <Container>
-      {secret === undefined ? (
-        <Skeleton width={"136px"} height={"14px"} />
-      ) : (
+    return (
+        <Container>
+            {secret === undefined ? (
+            <Skeleton width={"136px"} height={"14px"} />
+) : (
         <SecretText $bold={"bold"} $size={"s"}>
-          {secret}
+        {secret}
         </SecretText>
-      )}
+)}
 
-      <CopyButton onClick={handleCopy}>
+    <CopyButton onClick={handleCopy}>
         {isCopied ? (
-          <CopySuccess size={18} color={"green"} />
-        ) : (
-          <Copy size={18} />
-        )}
-      </CopyButton>
+                <CopySuccess size={18} color={"green"} />
+) : (
+        <Copy size={18} />
+)}
+    </CopyButton>
     </Container>
-  );
+);
 };

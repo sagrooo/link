@@ -4,10 +4,9 @@ import { useEffect } from "react";
 import { GenerateOtpResponse } from "@/shared/store/google-auth-store/_types.ts";
 import { Button } from "@/shared/ui/button";
 import { CommonContainer } from "@/shared/ui/common-container.ts";
+import { CopyTextButton } from "@/shared/ui/copy-text-button.tsx";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { Text } from "@/shared/ui/text";
-
-import { SecretKey } from "./secret-key";
 
 type Props = {
   onGenerate: () => void;
@@ -30,8 +29,10 @@ export const QrScanWidget = ({ onGenerate, otp, onNextStep }: Props) => {
       ) : (
         <Skeleton width={"122px"} height={"122px"} />
       )}
-      <SecretKey secret={otp?.secret} />
+      <CopyTextButton secret={otp?.secret} />
       <Button onClick={onNextStep}>Далее</Button>
+
+      <Button onClick={onGenerate}>Сгенерирвоать новый</Button>
     </CommonContainer>
   );
 };

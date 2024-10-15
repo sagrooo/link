@@ -1,1 +1,1 @@
-export { GoogleAuth } from "./google-auth-widget.tsx";
+export { GoogleAuth } from "./google-auth-widget";

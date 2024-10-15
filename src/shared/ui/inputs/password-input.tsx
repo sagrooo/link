@@ -34,7 +34,7 @@ export const PasswordInput = memo(function PasswordInput(props) {
   return (
     <Container>
       <SimpleInput type={isShowPass ? "text" : "password"} {...props} />
-      <TypeToggleButton type="button" onClick={handleToggleShown}>
+      <TypeToggleButton tabIndex={-1} type="button" onClick={handleToggleShown}>
         {isShowPass ? (
           <EyeSlash size={"16"} color={iconColor} />
         ) : (

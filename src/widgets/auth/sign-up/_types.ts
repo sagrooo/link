@@ -8,20 +8,20 @@ export const FormValues = z
       .max(20, "Username must be at most 20 characters long")
       .regex(
         /^[a-zA-Z0-9_]+$/,
-        "Username can only contain letters, numbers, and underscores",
+        "Только латинские буквы, цифры и подчеркивания",
       ),
     password: z
       .string()
       .min(8, "Пароль должен быть 8 символов и более")
-      .max(100, "Password must be at most 100 characters long"),
+      .max(100, "Пароль должен быть не более 100 символов"),
     confirmPassword: z
       .string()
       .min(8, "Пароль должен быть 8 символов и более")
-      .max(100, "Password must be at most 100 characters long"),
+      .max(100, "Пароль должен быть не более 100 символов"),
     email: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Пароли не совпадают",
     path: ["confirmPassword"],
   });
 

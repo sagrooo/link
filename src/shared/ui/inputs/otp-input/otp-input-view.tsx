@@ -1,6 +1,6 @@
 import { ChangeEvent, ClipboardEvent, KeyboardEvent, useRef } from "react";
 
-import { CodeContainer, Input } from "./otp-input.styles.ts";
+import { CodeContainer, Input } from "./otp-input.styles";
 
 type Props = {
   onChange: (value: string) => void;

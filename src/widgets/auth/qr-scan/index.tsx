@@ -3,12 +3,12 @@ import { QRCodeSVG } from "qrcode.react";
 import { useEffect } from "react";
 import { useHistory } from "react-router";
 
-import { useStore } from "@/shared/hooks/index.ts";
-import { Button } from "@/shared/ui/button.tsx";
-import { Skeleton } from "@/shared/ui/skeleton.ts";
-import { Text } from "@/shared/ui/text.tsx";
-import { Container } from "@/widgets/auth/configure-two-factor/configure-two-factor-widget.styles.ts";
-import { SecretKey } from "@/widgets/auth/google-auth/_components/secret-key.tsx";
+import { useStore } from "@/shared/hooks";
+import { Button } from "@/shared/ui/button";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { Text } from "@/shared/ui/text";
+import { Container } from "@/widgets/auth/configure-two-factor/configure-two-factor-widget.styles";
+import { SecretKey } from "@/widgets/auth/google-auth/_components/secret-key";
 
 export const QrScanWidget = observer(() => {
   const { authStore } = useStore();

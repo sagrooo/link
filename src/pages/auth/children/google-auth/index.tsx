@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { Redirect } from "react-router";
 
-import { useStore } from "@/shared/hooks/index.ts";
+import { useStore } from "@/shared/hooks";
 import { GoogleAuth } from "@/widgets/auth/google-auth";
 
 export const GoogleAuthPage = observer(() => {

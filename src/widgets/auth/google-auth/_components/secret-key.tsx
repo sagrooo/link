@@ -2,9 +2,9 @@ import { Copy, CopySuccess } from "iconsax-react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { Skeleton } from "@/shared/ui/skeleton.ts";
-import { Text } from "@/shared/ui/text.tsx";
-import { copyToClipboard } from "@/shared/utils/copy-to-clipboard.ts";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { Text } from "@/shared/ui/text";
+import { copyToClipboard } from "@/shared/utils/copy-to-clipboard";
 
 const Container = styled.div`
   position: relative;

@@ -4,8 +4,8 @@ import { Router } from "react-router-dom";
 
 import { RouterStore, syncHistoryWithStore } from "@ibm/mobx-react-router";
 
-import { StoreContext } from "@/shared/hooks/use-store.tsx";
-import { RootStore } from "@/shared/store/root-store.ts";
+import { StoreContext } from "@/shared/hooks/use-store";
+import { RootStore } from "@/shared/store/root-store";
 import { GlobalStyle } from "@/shared/styles/global";
 import { ThemeProvider } from "@/shared/theme";
 

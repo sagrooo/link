@@ -1,1 +1,1 @@
-export { ConfigureTwoFactorWidget } from "./configure-two-factor-widget.tsx";
+export { ConfigureTwoFactorWidget } from "./configure-two-factor-widget";

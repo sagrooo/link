@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Text } from "@/shared/ui/text.tsx";
+import { Text } from "@/shared/ui/text";
 
 export const Form = styled.form`
   width: 100%;

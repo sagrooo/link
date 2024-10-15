@@ -1,1 +1,1 @@
-export { PgpPassphraseWidget } from "./pgp-passphrase-widget.tsx";
+export { PgpPassphraseWidget } from "./pgp-passphrase-widget";

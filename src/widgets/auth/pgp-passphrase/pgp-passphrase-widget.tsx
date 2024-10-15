@@ -5,7 +5,7 @@ import { useStore } from "@/shared/hooks";
 import { Button } from "@/shared/ui/button";
 import { FormField } from "@/shared/ui/form-field";
 import { PasswordInput } from "@/shared/ui/inputs";
-import { FormValues } from "@/widgets/auth/pgp-passphrase/_types.ts";
+import { FormValues } from "@/widgets/auth/pgp-passphrase/_types";
 import {
   StyledForm,
   StyledText,

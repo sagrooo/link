@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { Redirect } from "react-router";
 
 import { useStore } from "@/shared/hooks";
-import { Button } from "@/shared/ui/button.tsx";
+import { Button } from "@/shared/ui/button";
 
 export const HomePage = observer(() => {
   const { authStore } = useStore();

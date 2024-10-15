@@ -2,10 +2,10 @@ import { observer } from "mobx-react";
 import { ChangeEvent, useState } from "react";
 import { Redirect } from "react-router";
 
-import { useStore } from "@/shared/hooks/index.ts";
-import { Button } from "@/shared/ui/button.tsx";
-import { Textarea } from "@/shared/ui/inputs/textarea.tsx";
-import { Text } from "@/shared/ui/text.tsx";
+import { useStore } from "@/shared/hooks";
+import { Button } from "@/shared/ui/button";
+import { Textarea } from "@/shared/ui/inputs/textarea";
+import { Text } from "@/shared/ui/text";
 
 import { Container } from "./save-pgp-auth-widget.styles";
 

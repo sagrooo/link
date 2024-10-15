@@ -5,13 +5,13 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useStore } from "@/shared/hooks";
-import { Button } from "@/shared/ui/button.tsx";
-import { OtpInput } from "@/shared/ui/inputs/otp-input/index.ts";
-import { Text } from "@/shared/ui/text.tsx";
+import { Button } from "@/shared/ui/button";
+import { OtpInput } from "@/shared/ui/inputs/otp-input";
+import { Text } from "@/shared/ui/text";
 import {
   Container,
   StyledForm,
-} from "@/widgets/auth/google-auth/google-auth-widget.styles.ts";
+} from "@/widgets/auth/google-auth/google-auth-widget.styles";
 
 export const GoogleAuth = observer(() => {
   const { authStore } = useStore();

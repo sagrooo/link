@@ -1,1 +1,1 @@
-export { TabsView } from "./tabs-view.tsx";
+export { TabsView } from "./tabs-view";

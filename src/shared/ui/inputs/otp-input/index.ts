@@ -1,1 +1,1 @@
-export { OtpInput } from "./otp-input-view.tsx";
+export { OtpInput } from "./otp-input-view";

@@ -9,7 +9,7 @@ import {
 
 import { RouterStore } from "@ibm/mobx-react-router";
 
-import { functionsMapError } from "@/shared/lib/functions-map-error.ts";
+import { functionsMapError } from "@/shared/lib/functions-map-error";
 import { supabase } from "@/shared/services/supabase-client";
 
 import {
@@ -24,16 +24,15 @@ export class AuthStore {
 
   isLoading = false;
 
-  error?: string;
+  error: string | null = null;
 
-  username?: string;
+  username: string | null = null;
 
-  user?: User;
+  user: User | null = null;
 
   otp: GenerateOtpSecretResponse | null = null;
 
   constructor(private routingStore: RouterStore) {
-    this.username = localStorage.getItem("username");
     this.isAuth = Boolean(localStorage.getItem("isAuth"));
 
     makeAutoObservable(this);
@@ -41,11 +40,10 @@ export class AuthStore {
 
   logout = () => {
     localStorage.removeItem("isAuth");
-    localStorage.removeItem("username");
 
     this.isAuth = false;
-    this.user = undefined;
-    this.username = undefined;
+    this.user = null;
+    this.username = null;
 
     this.routingStore.history.push("/auth/sign-in");
   };
@@ -113,7 +111,6 @@ export class AuthStore {
       }
 
       this.username = user.username;
-      localStorage.setItem("username", user.username);
       this.routingStore.history.push("/auth/two-factor/configure");
     } catch (e) {
       throw e;
@@ -237,7 +234,7 @@ export class AuthStore {
 
   fetchUser = async () => {
     try {
-      const username = localStorage.getItem("username");
+      const username = this.username;
       if (!username) {
         return;
       }

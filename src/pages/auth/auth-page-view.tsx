@@ -2,9 +2,9 @@ import { observer } from "mobx-react";
 import { Redirect } from "react-router";
 import { Route, Switch } from "react-router-dom";
 
-import { ConfigureTwoFactor } from "@/pages/auth/children/configure-two-factor/index.tsx";
+import { ConfigureTwoFactorPage } from "@/pages/auth/children/configure-two-factor";
 import { GoogleAuthPage } from "@/pages/auth/children/google-auth";
-import { PgpPassphrase } from "@/pages/auth/children/pgp-passphrase/index.tsx";
+import { PgpPassphrasePage } from "@/pages/auth/children/pgp-passphrase";
 import { SignInPage } from "@/pages/auth/children/sign-in";
 import { SignUpPage } from "@/pages/auth/children/sign-up";
 import { useStore } from "@/shared/hooks";
@@ -33,12 +33,12 @@ export const AuthPage = observer(() => {
             <Route path="/auth/sign-up" component={SignUpPage} />
             <Route
               path="/auth/two-factor/configure"
-              component={ConfigureTwoFactor}
+              component={ConfigureTwoFactorPage}
             />
             <Route path="/auth/two-factor/google" component={GoogleAuthPage} />
             <Route
               path="/auth/two-factor/pgp-passphrase"
-              component={PgpPassphrase}
+              component={PgpPassphrasePage}
             />
           </Switch>
         </Content>

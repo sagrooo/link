@@ -8,7 +8,7 @@ import { Button } from "@/shared/ui/button";
 import { FormField } from "@/shared/ui/form-field";
 import { PasswordInput } from "@/shared/ui/inputs/password-input";
 import { SimpleInput } from "@/shared/ui/inputs/simple-input";
-import { Link } from "@/shared/ui/link.tsx";
+import { Link } from "@/shared/ui/link";
 import { FormFieldNames, FormValues } from "@/widgets/auth/sign-in/_types";
 import {
   StyledForm,

@@ -1,4 +1,4 @@
-import { corsHeaders } from "./cors.ts";
+import { corsHeaders } from "./cors";
 
 type Props = {
   body: any;

@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { FieldError } from "react-hook-form";
 
-import { Text } from "@/shared/ui/text.tsx";
+import { Text } from "@/shared/ui/text";
 
 import { Container, Error, RequiredSymbol } from "./form-field.styles";
 

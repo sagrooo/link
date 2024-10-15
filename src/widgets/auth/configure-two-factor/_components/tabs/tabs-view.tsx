@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { Tab } from "@/widgets/auth/configure-two-factor/_types.ts";
+import { Tab } from "@/widgets/auth/configure-two-factor/_types";
 
-import { TabButton, TabsContainer } from "./tabs.styles.ts";
+import { TabButton, TabsContainer } from "./tabs.styles";
 
 type Props = {
   onChange: (tab: Tab) => void;

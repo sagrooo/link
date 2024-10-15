@@ -1,9 +1,9 @@
-import { corsHeaders } from "../_shared/cors.ts";
-import { newResponse } from "../_shared/new-response.ts";
-import { supabase } from "../_shared/supabase-client.ts";
+import { corsHeaders } from "../_shared/cors";
+import { newResponse } from "../_shared/new-response";
+import { supabase } from "../_shared/supabase-client";
 
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod.ts";
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod";
+import "jsr:@supabase/functions-js/edge-runtime.d";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {

@@ -8,7 +8,7 @@ import { Button } from "@/shared/ui/button";
 import { FormField } from "@/shared/ui/form-field";
 import { PasswordInput } from "@/shared/ui/inputs/password-input";
 import { SimpleInput } from "@/shared/ui/inputs/simple-input";
-import { Link } from "@/shared/ui/link.tsx";
+import { Link } from "@/shared/ui/link";
 
 import { FormFieldNames, FormValues } from "./_types";
 import { Form, StyledText } from "./sign-up-widget.styles";
@@ -22,16 +22,17 @@ export const SignUpWidget = observer(() => {
     setError,
   } = useForm<FormValues>({
     defaultValues: {
-      username: "sagro",
-      password: "Sol12345",
-      confirmPassword: "Sol12345",
-      email: "s@s.ru",
+      username: "",
+      password: "",
+      confirmPassword: "",
+      email: "",
     },
     resolver: zodResolver(FormValues),
+    mode: "all",
+    reValidateMode: "all",
   });
 
   const handleFormSubmit = handleSubmit(async (data: FormValues) => {
-    console.log("data", data);
     try {
       await authStore.signup(data);
     } catch (e) {
@@ -56,6 +57,7 @@ export const SignUpWidget = observer(() => {
             isRequired
           >
             <SimpleInput
+              autoComplete="username"
               onChange={field.onChange}
               value={field.value}
               placeholder={"Имя пользователя"}
@@ -67,11 +69,13 @@ export const SignUpWidget = observer(() => {
         control={control}
         name={FormFieldNames.Email}
         render={({ field }) => (
-          <FormField
-            label={"Введите почту"}
-            error={errors[FormFieldNames.Email]}
-          >
-            <SimpleInput onChange={field.onChange} value={field.value} />
+          <FormField label={"Email"} error={errors[FormFieldNames.Email]}>
+            <SimpleInput
+              autoComplete="email"
+              placeholder={"Введите email"}
+              onChange={field.onChange}
+              value={field.value}
+            />
           </FormField>
         )}
       />
@@ -84,7 +88,12 @@ export const SignUpWidget = observer(() => {
             error={errors[FormFieldNames.Password]}
             isRequired
           >
-            <PasswordInput onChange={field.onChange} value={field.value} />
+            <PasswordInput
+              autoComplete="new-password"
+              placeholder={"********"}
+              onChange={field.onChange}
+              value={field.value}
+            />
           </FormField>
         )}
       />
@@ -97,7 +106,12 @@ export const SignUpWidget = observer(() => {
             error={errors[FormFieldNames.ConfirmPassword]}
             isRequired
           >
-            <PasswordInput onChange={field.onChange} value={field.value} />
+            <PasswordInput
+              autoComplete="new-password"
+              placeholder={"********"}
+              onChange={field.onChange}
+              value={field.value}
+            />
           </FormField>
         )}
       />

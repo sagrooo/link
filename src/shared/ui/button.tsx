@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
-import { Text } from "@/shared/ui/text.tsx";
+import { Text } from "@/shared/ui/text";
 
 export enum ButtonVariant {
   Primary = "primary",
@@ -32,6 +32,7 @@ export const StyledButton = styled.button<Props>`
 
 export const Button = ({ variant, isLoading, children, ...rest }: Props) => (
   <StyledButton
+    tabIndex={1}
     variant={variant}
     disabled={isLoading || rest.disabled}
     {...rest}

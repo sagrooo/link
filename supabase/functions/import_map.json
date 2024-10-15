@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "_shared/": "./_shared/",
+    "$lib/": "./_shared/"
+  }
+}

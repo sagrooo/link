@@ -1,44 +1,75 @@
-import { Controller, useForm } from "react-hook-form";
+import { observer } from "mobx-react";
+import { useState } from "react";
 
 import { useStore } from "@/shared/hooks";
-import { Button } from "@/shared/ui/button";
-import { FormField } from "@/shared/ui/form-field";
-import { PasswordInput } from "@/shared/ui/inputs";
+import { PgpAuthStep } from "@/shared/store/pgp-auth-store/_types.ts";
+import { CopyTextButton } from "@/shared/ui/copy-text-button.tsx";
+import { VerifyOtpCodeWidget } from "@/widgets/auth/verify-otp-code-widget";
 
+import { PgpKeyTextarea } from "./_components/pgp-key-textarea.tsx";
 import { FormValues } from "./_types.ts";
-import { StyledForm, StyledText } from "./configure-pgp-auth-widget.styles";
 
-export const ConfigurePgpAuthWidget = () => {
-  const { authStore } = useStore();
-  const {
-    handleSubmit,
-    control,
-    formState: { isValid },
-  } = useForm<FormValues>();
+export const ConfigurePgpAuthWidget = observer(() => {
+  const { authStore, pgpAuthStore } = useStore();
+  const [privateKey, setPrivateKey] = useState<string>("");
 
-  const handleFormSubmit = handleSubmit(({ passphrase }: FormValues) => {
-    // void authStore.verifyPGPKey(passphrase);
-  });
+  const username = authStore.user?.username || "";
 
-  return (
-    <StyledForm onSubmit={handleFormSubmit}>
-      <StyledText>Для подтверждения неоходимо ввести пароль</StyledText>
-      <Controller
-        control={control}
-        name="passphrase"
-        render={({ field }) => (
-          <FormField isZeroMargin isRequired label={"Пароль"}>
-            <PasswordInput
-              onBlur={field.onBlur}
-              onChange={field.onChange}
-              value={field.value}
-            />
-          </FormField>
-        )}
-      />
-      <Button disabled={!isValid} isLoading={authStore.isLoading}>
-        Далее
-      </Button>
-    </StyledForm>
-  );
-};
+  const handleSetPublicKey = async ({ key: publicKey }: FormValues) => {
+    pgpAuthStore.savePublicKey({
+      publicKey,
+      username,
+    });
+  };
+
+  const handleSavePrivateKey = ({
+    key: privateKey,
+    isSavePrivateKey,
+  }: FormValues) => {
+    setPrivateKey(privateKey);
+
+    if (isSavePrivateKey) {
+    }
+
+    pgpAuthStore.setStep(PgpAuthStep.EnterPassphrase);
+  };
+
+  const handleEncryptKey = (passphrase: string) => {
+    void pgpAuthStore.verify({
+      username,
+      secret: privateKey,
+      otp: passphrase,
+    });
+  };
+
+  switch (pgpAuthStore.step) {
+    case PgpAuthStep.PublicKey:
+      return (
+        <PgpKeyTextarea
+          type={"publicKey"}
+          isLoading={pgpAuthStore.isLoading}
+          onSubmit={handleSetPublicKey}
+        />
+      );
+
+    case PgpAuthStep.PrivateKey:
+      return (
+        <PgpKeyTextarea onSubmit={handleSavePrivateKey} type={"privateKey"} />
+      );
+
+    case PgpAuthStep.EnterPassphrase:
+      return (
+        <VerifyOtpCodeWidget
+          isLoading={pgpAuthStore.isLoading}
+          onVerify={handleEncryptKey}
+          buttonText={"Сохранить"}
+        >
+          <CopyTextButton
+            defaultText={"Скопировать зашифрованное PGP сообщение"}
+          />
+        </VerifyOtpCodeWidget>
+      );
+    default:
+      return null;
+  }
+});

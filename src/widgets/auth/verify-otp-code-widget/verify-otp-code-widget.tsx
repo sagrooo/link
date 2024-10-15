@@ -1,3 +1,4 @@
+import { PropsWithChildren } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
 
@@ -20,13 +21,19 @@ type Props = {
   isLoading: boolean;
   onVerify: (otp: string) => void;
   buttonText?: string;
+  titleText?: string;
 };
+
+const DEFAULT_TITLE_TEXT =
+  "Для продолжения необходимо подтвердить установку 2FA";
 
 export const VerifyOtpCodeWidget = ({
   onVerify,
   isLoading,
-  buttonText = "Далее",
-}: Props) => {
+  buttonText = "Сохранить",
+  children,
+  titleText = DEFAULT_TITLE_TEXT,
+}: PropsWithChildren<Props>) => {
   const {
     formState: { isValid, errors },
     handleSubmit,
@@ -38,7 +45,7 @@ export const VerifyOtpCodeWidget = ({
 
   const handleFormSubmit = handleSubmit(async ({ otp }: FormValues) => {
     try {
-      await onVerify(otp);
+      onVerify(otp);
     } catch (e) {
       // @ts-ignore
       if (e.code === "invalid_code") {
@@ -52,7 +59,8 @@ export const VerifyOtpCodeWidget = ({
 
   return (
     <CommonContainer>
-      <Text $align={"center"}>Введите код из вашего 2FA приложения</Text>
+      <Text $align={"center"}>{titleText}</Text>
+      {children}
       <StyledForm onSubmit={handleFormSubmit}>
         <Controller
           control={control}

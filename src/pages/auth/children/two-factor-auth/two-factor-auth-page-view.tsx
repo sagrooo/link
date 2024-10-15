@@ -7,7 +7,7 @@ import { TwoFactorType } from "@/shared/store/auth-store/_types.ts";
 import { VerifyOtpCodeWidget } from "@/widgets/auth/verify-otp-code-widget";
 
 export const TwoFactorAuthPage = observer(() => {
-  const { authStore, googleAuthStore } = useStore();
+  const { authStore, googleAuthStore, pgpAuthStore } = useStore();
 
   const handleVerify = async (otp: string) => {
     if (authStore.user === null || authStore.user.twoFactorType === null) {
@@ -19,7 +19,7 @@ export const TwoFactorAuthPage = observer(() => {
     const verifyRequest =
       twoFactorType === TwoFactorType.Google
         ? googleAuthStore.verify
-        : googleAuthStore.verify;
+        : pgpAuthStore.verify;
 
     try {
       await verifyRequest({
@@ -39,6 +39,7 @@ export const TwoFactorAuthPage = observer(() => {
 
   return (
     <VerifyOtpCodeWidget
+      titleText={"Введите код из вашего 2FA приложения"}
       buttonText={"Войти"}
       onVerify={handleVerify}
       isLoading={googleAuthStore.isLoading}

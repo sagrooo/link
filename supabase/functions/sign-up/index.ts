@@ -3,7 +3,9 @@ import { newResponse } from "../_shared/new-response.ts";
 import { supabase } from "../_shared/supabase-client.ts";
 
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { create } from "https://deno.land/x/djwt/mod.ts";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import * as crypto from "node:crypto";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -51,11 +53,22 @@ Deno.serve(async (req) => {
         body: { code: "internal_error", message: "Failed to create user." },
       });
     }
-    delete newUser.password;
+
+    const payload = {
+      username: newUser.username,
+    };
+
+    const key = await crypto.subtle.generateKey(
+      { name: "HMAC", hash: "SHA-512" },
+      true,
+      ["sign", "verify"],
+    );
+
+    const token = await create({ alg: "HS512", typ: "JWT" }, payload, key);
 
     return newResponse({
       status: 200,
-      body: newUser,
+      body: { token },
     });
   } catch (error) {
     return newResponse({

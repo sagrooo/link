@@ -1,11 +1,13 @@
 import styled from "styled-components";
 
 import { SimpleInput } from "@/shared/ui/inputs";
+import { Textarea } from "@/shared/ui/inputs/textarea.tsx";
 
 export const Container = styled.label<{
   $isError: boolean;
   $isZeroMargin: boolean;
 }>`
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -13,9 +15,12 @@ export const Container = styled.label<{
   font-size: 16px;
   margin-bottom: ${({ $isZeroMargin }) => ($isZeroMargin ? "0" : "28px")};
 
-  ${SimpleInput} {
+  ${SimpleInput},
+  ${Textarea} {
     border-color: ${({ $isError, theme }) =>
-      $isError ? theme.input.borderError : theme.input.borderColor} !important;
+      $isError
+        ? theme.input.borderError
+        : theme.input.borderPrimary} !important;
   }
 `;
 

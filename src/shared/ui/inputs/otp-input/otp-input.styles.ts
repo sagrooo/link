@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Input = styled.input<{ $isError?: boolean }>`
   width: 38px;
   height: 48px;
-  border: 1px solid ${({ theme, $isError }) => theme.input.borderPrimary};
+  border: 1px solid ${({ theme }) => theme.input.borderPrimary};
   border-radius: 8px;
   text-align: center;
   font-size: 20px;
@@ -36,6 +36,6 @@ export const CodeContainer = styled.div<{ $isError: boolean }>`
 
   ${Input} {
     border-color: ${({ $isError, theme }) =>
-      $isError ? theme.input.borderError : theme.input.borderColor};
+      $isError ? theme.input.borderError : theme.input.borderPrimary};
   }
 `;

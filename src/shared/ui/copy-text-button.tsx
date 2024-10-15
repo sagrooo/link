@@ -1,17 +1,16 @@
 import { Copy, CopySuccess } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { Skeleton } from "@/shared/ui/skeleton";
 import { Text } from "@/shared/ui/text";
 import { copyToClipboard } from "@/shared/utils/copy-to-clipboard";
 
 const Container = styled.div`
   position: relative;
-  padding: 8px 12px 8px 24px;
+  padding: 8px 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   border: 1px solid #000000;
   border-radius: 8px;
   font-weight: 700;
@@ -31,47 +30,45 @@ const SecretText = styled(Text)`
 `;
 
 type Props = {
-    secret?: string;
+  secret?: string;
+  defaultText?: ReactNode;
 };
 
-export const SecretKey = ({ secret }: Props) => {
-    const [isCopied, setIsCopied] = useState(false);
+export const CopyTextButton = ({ secret, defaultText }: Props) => {
+  const [isCopied, setIsCopied] = useState(false);
 
-    const handleCopy = () => {
-        if (secret) {
-            copyToClipboard(secret);
-            setIsCopied(true);
-        }
-    };
+  const handleCopy = () => {
+    if (secret) {
+      copyToClipboard(secret);
+      setIsCopied(true);
+    }
+  };
 
-    useEffect(() => {
-        let timeout: NodeJS.Timeout;
-        if (isCopied) {
-            timeout = setTimeout(() => {
-                setIsCopied(false);
-            }, 2000);
-        }
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (isCopied) {
+      timeout = setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    }
 
-        return () => clearTimeout(timeout);
-    }, [isCopied]);
+    return () => clearTimeout(timeout);
+  }, [isCopied]);
 
-    return (
-        <Container>
-            {secret === undefined ? (
-            <Skeleton width={"136px"} height={"14px"} />
-) : (
-        <SecretText $bold={"bold"} $size={"s"}>
-        {secret}
-        </SecretText>
-)}
+  const text = secret ?? defaultText;
 
-    <CopyButton onClick={handleCopy}>
+  return (
+    <Container>
+      <CopyButton onClick={handleCopy}>
         {isCopied ? (
-                <CopySuccess size={18} color={"green"} />
-) : (
-        <Copy size={18} />
-)}
-    </CopyButton>
+          <CopySuccess size={18} color={"green"} />
+        ) : (
+          <Copy size={18} />
+        )}
+      </CopyButton>
+      <SecretText $bold={"bold"} $size={"s"}>
+        {text}
+      </SecretText>
     </Container>
-);
+  );
 };

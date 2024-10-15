@@ -1,38 +1,26 @@
-import { QRCodeSVG } from "qrcode.react";
-import { useEffect } from "react";
-
-import { GenerateOtpResponse } from "@/shared/store/google-auth-store/_types.ts";
-import { Button } from "@/shared/ui/button";
+import { Button, ButtonVariant } from "@/shared/ui/button";
 import { CommonContainer } from "@/shared/ui/common-container.ts";
 import { CopyTextButton } from "@/shared/ui/copy-text-button.tsx";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { Text } from "@/shared/ui/text";
 
-type Props = {
-  onGenerate: () => void;
-  otp: GenerateOtpResponse | null;
-  onNextStep: () => void;
-};
+import { ButtonContainer } from "./qr-scan-view.styles.ts";
 
-export const QrScanWidget = ({ onGenerate, otp, onNextStep }: Props) => {
-  useEffect(() => {
-    onGenerate();
-  }, []);
+export const QrScanSkeleton = () => (
+  <CommonContainer>
+    <Text $align={"center"}>
+      Для продолжения необходимо сохранить сгенерированный ключ
+    </Text>
+    <Skeleton width={"122px"} height={"122px"} />
+    <CopyTextButton
+      defaultText={<Skeleton width={"130px"} height={"14px"} />}
+    />
 
-  return (
-    <CommonContainer>
-      <Text $align={"center"}>
-        Для продолжения необходимо сохранить сгенерированный ключ
-      </Text>
-      {otp?.otpauthUrl ? (
-        <QRCodeSVG width={122} height={122} value={otp?.otpauthUrl} />
-      ) : (
-        <Skeleton width={"122px"} height={"122px"} />
-      )}
-      <CopyTextButton secret={otp?.secret} />
-      <Button onClick={onNextStep}>Далее</Button>
-
-      <Button onClick={onGenerate}>Сгенерирвоать новый</Button>
-    </CommonContainer>
-  );
-};
+    <ButtonContainer>
+      <Button disabled>Далее</Button>
+      <Button variant={ButtonVariant.Secondary} disabled>
+        Сгенерирвоать новый
+      </Button>
+    </ButtonContainer>
+  </CommonContainer>
+);

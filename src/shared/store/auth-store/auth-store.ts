@@ -90,7 +90,7 @@ export class AuthStore {
     this.error = null;
     this.isLoading = true;
     try {
-      const { error } = await supabase.functions.invoke<JwtPayload>("sign-up", {
+      const { data, error } = await supabase.functions.invoke("sign-up", {
         body: JSON.stringify({
           username,
           password,
@@ -104,6 +104,7 @@ export class AuthStore {
         return;
       }
 
+      this.token = data.token;
       this.routingStore.history.push(ROUTES.configureTwoFactor);
     } catch (e) {
       throw e;

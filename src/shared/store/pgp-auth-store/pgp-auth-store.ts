@@ -1,21 +1,18 @@
 import { makeAutoObservable } from "mobx";
-import {
-  createCleartextMessage,
-  decryptKey,
-  generateKey,
-  readPrivateKey,
-  sign,
-} from "openpgp";
 
-import { functionsMapError } from "@/shared/lib/functions-map-error.ts";
-import { supabase } from "@/shared/services/supabase-client.ts";
+import { functionsMapError } from "@/shared/lib/functions-map-error";
+import { supabase } from "@/shared/services/supabase-client";
 import {
   ImplPgpAuthStore,
   PgpAuthStep,
-} from "@/shared/store/pgp-auth-store/_types.ts";
+} from "@/shared/store/pgp-auth-store/_types";
+import { decryptPrivateKey } from "@/shared/store/pgp-auth-store/_utils/decrypt-private-key.ts";
+import { signChallenge } from "@/shared/store/pgp-auth-store/_utils/sign-challenge.ts";
+
+import { encryptPrivateKey } from "./_utils/encrypt-private-key";
 
 export class PgpAuthStore implements ImplPgpAuthStore {
-  step: PgpAuthStep = PgpAuthStep.EnterKey;
+  step: PgpAuthStep = PgpAuthStep.PublicKey;
 
   isLoading = false;
 
@@ -23,66 +20,94 @@ export class PgpAuthStore implements ImplPgpAuthStore {
     makeAutoObservable(this);
   }
 
-  createKey: ImplPgpAuthStore["createKey"] = async ({
-    pgpKey,
+  savePublicKey: ImplPgpAuthStore["savePublicKey"] = async ({
+    publicKey,
     username,
-    passphrase,
   }) => {
     this.isLoading = true;
     try {
-      const { privateKey, publicKey: secret } = await generateKey({
-        type: "rsa",
-        rsaBits: 2048,
-        userIDs: [{ name: username }],
-        passphrase,
-      });
-
       const { error } = await supabase.functions.invoke("add-pgp-key", {
         body: JSON.stringify({
           username,
-          secret,
+          publicKey,
         }),
       });
 
       if (error) {
         await functionsMapError(error);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.isLoading = false;
-    }
-  };
-
-  verify: ImplPgpAuthStore["verify"] = async ({ secret, otp, username }) => {
-    this.isLoading = true;
-    try {
-      const armoredKey = localStorage.getItem("privateKey");
-
-      if (!armoredKey) {
         return;
       }
 
-      await decryptKey({
-        privateKey: await readPrivateKey({ armoredKey }),
-        passphrase: otp,
-      });
-
-      const signedChallenge = await sign({
-        message: await createCleartextMessage({ text: challenge }),
-        signingKeys: privateKey,
-      });
-
-      const { data: verifyData, error } = await supabase.functions.invoke(
-        "verifyChallenge",
-        {
-          body: JSON.stringify({ username, signedChallenge }),
-        },
-      );
+      this.setStep(PgpAuthStep.PrivateKey);
     } catch (e) {
       console.error(e);
     } finally {
       this.isLoading = false;
     }
   };
+
+  verify: ImplPgpAuthStore["verify"] = async ({ username, secret, otp }) => {
+    this.isLoading = true;
+    try {
+      const {
+        data: { challenge },
+        error,
+      } = await supabase.functions.invoke("create-challenge", {
+        body: {
+          username,
+        },
+      });
+
+      if (error) {
+        await functionsMapError(error);
+        return;
+      }
+
+      const signedMessage = await signChallenge({
+        challenge,
+        armoredKey: secret,
+        passphrase: otp,
+      });
+
+      console.log(signedMessage);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.isLoading = false;
+    }
+  };
+
+  setStep: ImplPgpAuthStore["setStep"] = (step: PgpAuthStep) => {
+    this.step = step;
+  };
+
+  encryptPrivateKey: ImplPgpAuthStore["encryptPrivateKey"] = async ({
+    privateKey,
+    passphrase,
+  }) => {
+    const encryptedKey = await encryptPrivateKey({
+      privateKey,
+      passphrase,
+    });
+
+    localStorage.setItem("encryptedPrivateKey", JSON.stringify(encryptedKey));
+  };
+
+  decryptPrivateKey: ImplPgpAuthStore["decryptPrivateKey"] = async (
+    passphrase: string,
+  ) => {
+    const encryptedKeyString = localStorage.getItem("pgpPrivateKey");
+
+    if (!encryptedKeyString) {
+      alert("No private key found.");
+      return;
+    }
+
+    const key = await decryptPrivateKey({ encryptedKeyString, passphrase });
+    console.log(key);
+  };
+
+  get savedPrivateKey() {
+    return indexedDB.open("pgp-auth");
+  }
 }

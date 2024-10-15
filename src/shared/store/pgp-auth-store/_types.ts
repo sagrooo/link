@@ -4,15 +4,19 @@ type VerifyProps = {
   secret: string;
 };
 
-type SetPgpKeyProps = {
-  pgpKey: string;
+type SavePublicKeyProps = {
+  publicKey: string;
   username: string;
-  passphrase: string;
 };
 
+type EncryptPrivateKeyProps = {
+  passphrase: string;
+  privateKey: string;
+};
 export enum PgpAuthStep {
-  EnterKey = "enterKey",
-  Verify = "verify",
+  PublicKey = "publicKey",
+  PrivateKey = "privateKey",
+  EnterPassphrase = "enterPassphrase",
 }
 
 export type ImplPgpAuthStore = {
@@ -20,7 +24,13 @@ export type ImplPgpAuthStore = {
 
   step: PgpAuthStep;
 
-  readonly createKey: (props: SetPgpKeyProps) => void;
+  readonly savePublicKey: (props: SavePublicKeyProps) => void;
+
   readonly verify: (props: VerifyProps) => Promise<void>;
-  readonly onGotoVerify: () => void;
+
+  readonly setStep: (step: PgpAuthStep) => void;
+
+  readonly encryptPrivateKey: (values: EncryptPrivateKeyProps) => Promise<void>;
+
+  readonly decryptPrivateKey: (passphrase: string) => Promise<void>;
 };

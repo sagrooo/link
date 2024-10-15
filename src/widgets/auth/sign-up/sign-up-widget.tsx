@@ -29,7 +29,7 @@ export const SignUpWidget = observer(() => {
     },
     resolver: zodResolver(FormValues),
     mode: "all",
-    reValidateMode: "all",
+    reValidateMode: "onChange",
   });
 
   const handleFormSubmit = handleSubmit(async (data: FormValues) => {
@@ -52,7 +52,7 @@ export const SignUpWidget = observer(() => {
         name={FormFieldNames.Username}
         render={({ field }) => (
           <FormField
-            error={errors[FormFieldNames.Username]}
+            error={errors.username}
             label={"Имя пользователя"}
             isRequired
           >
@@ -83,11 +83,7 @@ export const SignUpWidget = observer(() => {
         control={control}
         name={FormFieldNames.Password}
         render={({ field }) => (
-          <FormField
-            label={"Пароль"}
-            error={errors[FormFieldNames.Password]}
-            isRequired
-          >
+          <FormField label={"Пароль"} error={errors.password} isRequired>
             <PasswordInput
               autoComplete="new-password"
               placeholder={"********"}
@@ -103,7 +99,7 @@ export const SignUpWidget = observer(() => {
         render={({ field }) => (
           <FormField
             label={"Подтвердите пароль"}
-            error={errors[FormFieldNames.ConfirmPassword]}
+            error={errors.confirmPassword}
             isRequired
           >
             <PasswordInput

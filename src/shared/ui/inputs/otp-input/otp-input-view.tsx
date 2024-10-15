@@ -7,7 +7,7 @@ type Props = {
   isError?: boolean;
 };
 
-export const OtpInput = ({ onChange, isError }: Props) => {
+export const OtpInput = ({ onChange, isError = false }: Props) => {
   const inputRefs = useRef<Array<HTMLInputElement>>([]);
 
   const handleChange = () => {
@@ -53,7 +53,7 @@ export const OtpInput = ({ onChange, isError }: Props) => {
     }
   };
 
-  const setInputRef = (index) => (ref: HTMLInputElement) => {
+  const setInputRef = (index: number) => (ref: HTMLInputElement) => {
     inputRefs.current[index] = ref;
   };
 

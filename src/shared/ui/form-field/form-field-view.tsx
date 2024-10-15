@@ -17,7 +17,7 @@ export const FormField = ({
   label,
   isRequired,
   error,
-  isZeroMargin,
+  isZeroMargin = false,
 }: PropsWithChildren<FormFieldProps>) => (
   <Container $isZeroMargin={isZeroMargin} $isError={Boolean(error)}>
     <Text>

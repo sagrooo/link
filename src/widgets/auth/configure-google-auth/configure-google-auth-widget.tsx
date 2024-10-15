@@ -6,7 +6,7 @@ import { useStore } from "@/shared/hooks";
 import { AuthStep } from "@/shared/store/google-auth-store/_types";
 import { VerifyOtpCodeWidget } from "@/widgets/auth/verify-otp-code-widget";
 
-import { QrScanWidget } from "./_components/qr-scan";
+import { QrScan } from "./_components/qr-scan";
 
 export const ConfigureGoogleAuthWidget = observer(() => {
   const { googleAuthStore, authStore } = useStore();
@@ -40,7 +40,8 @@ export const ConfigureGoogleAuthWidget = observer(() => {
   switch (googleAuthStore.step) {
     case AuthStep.ScanQr:
       return (
-        <QrScanWidget
+        <QrScan
+          isLoading={googleAuthStore.isLoading}
           otp={otpModel}
           onNextStep={goToVerify}
           onGenerate={handleGenerate}
@@ -49,7 +50,11 @@ export const ConfigureGoogleAuthWidget = observer(() => {
 
     case AuthStep.Verify:
       return (
-        <VerifyOtpCodeWidget onVerify={handleVerify} isLoading={isLoading} />
+        <VerifyOtpCodeWidget
+          buttonText={"Сохранить"}
+          onVerify={handleVerify}
+          isLoading={isLoading}
+        />
       );
 
     default:

@@ -4,20 +4,15 @@ import { supabase } from "../_shared/supabase-client.ts";
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-console.log("Hello from Functions!");
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const { secret, username } = await req.json();
+    const { publicKey: secret, username } = await req.json();
 
-    await supabase
-      .from("users")
-      .update({ twoFactorType: "pgp", secret })
-      .eq("username", username);
+    await supabase.from("users").update({ secret }).eq("username", username);
 
     return newResponse({
       status: 200,

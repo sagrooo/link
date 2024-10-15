@@ -37,7 +37,7 @@ export const Button = ({ variant, isLoading, children, ...rest }: Props) => (
     disabled={isLoading || rest.disabled}
     {...rest}
   >
-    <Text $bold={"$bold"} $size={"l"}>
+    <Text $bold={"bold"} $size={"l"}>
       {isLoading ? "Loading..." : children}
     </Text>
   </StyledButton>

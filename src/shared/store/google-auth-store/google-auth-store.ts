@@ -1,6 +1,5 @@
 import { makeAutoObservable } from "mobx";
 
-import { ROUTES } from "@/shared/_constants.ts";
 import { functionsMapError } from "@/shared/lib/functions-map-error.ts";
 import { supabase } from "@/shared/services/supabase-client.ts";
 import {
@@ -56,8 +55,6 @@ export class GoogleAuthStore implements ImplGoogleAuthStore {
       }
 
       this.otpModel = null;
-      localStorage.removeItem("tempUsername");
-      this.routingStore.push(ROUTES.signIn);
     } catch (e) {
       throw e;
     } finally {

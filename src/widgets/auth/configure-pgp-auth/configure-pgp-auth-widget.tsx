@@ -13,9 +13,10 @@ import { FormValues } from "./_types.ts";
 
 export const ConfigurePgpAuthWidget = observer(() => {
   const { authStore, pgpAuthStore } = useStore();
-  const [privateKeyConfig, setPrivateKeyConfig] = useState<FormValues | null>(
-    null,
-  );
+  const [privateKeyConfig, setPrivateKeyConfig] = useState<FormValues>({
+    key: "",
+  });
+
   const history = useHistory();
 
   const username = authStore.user?.username || "";

@@ -69,33 +69,33 @@ export class PgpAuthStore implements ImplPgpAuthStore {
   };
 
   verify: ImplPgpAuthStore["verify"] = async ({
+    secret: privateKey,
+    otp: passphrase,
     username,
-    secret,
-    otp,
     isSaveToStore = false,
   }) => {
     this.isLoading = true;
     try {
-      if (secret === undefined || otp === undefined) {
-        throw new Error("Missing secret or otp");
+      if (privateKey === null || passphrase === undefined) {
+        throw { code: "missing_private_key", message: "Missing private key" };
       }
 
       if (isSaveToStore) {
-        await this.savePrivateKey({ privateKey: secret, passphrase: otp });
+        await this.savePrivateKey({ privateKey, passphrase });
       }
 
       const signedMessage = await this.createAndSignChallenge({
-        privateKey: secret,
-        passphrase: otp,
+        privateKey,
+        passphrase,
         username,
       });
 
       await this.verifySignedMessage({
+        // @ts-ignore
         signedMessage,
         username,
       });
     } catch (e) {
-      console.error(e);
       throw e;
     } finally {
       this.isLoading = false;
@@ -106,19 +106,23 @@ export class PgpAuthStore implements ImplPgpAuthStore {
     this.step = step;
   };
 
-  get isPrivateKeyInStorage() {
-    return Boolean(localStorage.getItem("armoredPrivateKey"));
-  }
+  getStoredArmoredPrivateKey: ImplPgpAuthStore["getStoredArmoredPrivateKey"] =
+    async (passphrase: string) => {
+      const encryptedKeyString = localStorage.getItem("armoredPrivateKey");
 
-  private getStoredArmoredPrivateKey = async (passphrase: string) => {
-    const encryptedKeyString = localStorage.getItem("armoredPrivateKey");
+      if (!encryptedKeyString) {
+        throw { code: "missing_private_key", message: "Missing private key" };
+      }
 
-    if (!encryptedKeyString) {
-      return null;
-    }
-
-    return decryptPrivateKey({ encryptedKeyString, passphrase });
-  };
+      try {
+        return await decryptPrivateKey({
+          encryptedKeyString,
+          passphrase,
+        });
+      } catch (e) {
+        throw { code: "invalid_code", message: "Invalid passphrase" };
+      }
+    };
 
   private verifySignedMessage = async ({
     signedMessage,
@@ -127,10 +131,10 @@ export class PgpAuthStore implements ImplPgpAuthStore {
     const { error: verifyError } = await supabase.functions.invoke(
       "verify-pgp",
       {
-        body: {
+        body: JSON.stringify({
           signedMessage,
           username,
-        },
+        }),
       },
     );
 
@@ -154,11 +158,11 @@ export class PgpAuthStore implements ImplPgpAuthStore {
       },
     });
 
+    const storedKey = await this.getStoredArmoredPrivateKey(passphrase);
+
     if (createChallengeError) {
       await functionsMapError(createChallengeError);
     }
-
-    const storedKey = await this.getStoredArmoredPrivateKey(passphrase);
     let armoredKey = privateKey || storedKey;
     if (!armoredKey) {
       throw new Error("Приватный ключ не найден");

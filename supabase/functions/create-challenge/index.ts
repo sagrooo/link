@@ -8,8 +8,6 @@ import { supabase } from "../_shared/supabase-client.ts";
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-console.log("Hello from Functions!");
-
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 Deno.serve(async (req) => {
@@ -33,7 +31,6 @@ Deno.serve(async (req) => {
       .from("challenges")
       .insert([{ userId: users.id, challenge, expiresAt }]);
 
-    console.log(insertError);
     if (insertError) {
       return newResponse({
         status: 500,

@@ -73,7 +73,6 @@ export class AuthStore {
 
       const { twoFactorType } = jwtDecode<JwtPayload>(data.token);
       this.token = data.token;
-      console.log(jwtDecode(data.token));
 
       this.routingStore.history.push(
         twoFactorType !== null

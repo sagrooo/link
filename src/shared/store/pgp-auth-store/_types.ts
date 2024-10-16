@@ -1,7 +1,7 @@
 import { WebStream } from "openpgp";
 
 type VerifyProps = {
-  secret: string;
+  secret: string | null;
   otp: string;
   username: string;
   isSaveToStore?: boolean;
@@ -44,6 +44,8 @@ export type ImplPgpAuthStore = {
   readonly savePrivateKey: (props: SavePrivateKeyProps) => Promise<void>;
 
   readonly verify: (props: VerifyProps) => Promise<void>;
+
+  readonly getStoredArmoredPrivateKey: (passphrase: string) => Promise<string>;
 
   readonly setStep: (step: PgpAuthStep) => void;
 };

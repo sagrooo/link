@@ -19,7 +19,7 @@ const StyledForm = styled.form`
 
 type Props = {
   isLoading: boolean;
-  onVerify: (otp: string) => void;
+  onVerify: (otp: string) => Promise<void>;
   buttonText?: string;
   titleText?: string;
 };
@@ -45,7 +45,7 @@ export const VerifyOtpCodeWidget = ({
 
   const handleFormSubmit = handleSubmit(async ({ otp }: FormValues) => {
     try {
-      onVerify(otp);
+      await onVerify(otp);
     } catch (e) {
       // @ts-ignore
       if (e.code === "invalid_code") {
@@ -54,6 +54,7 @@ export const VerifyOtpCodeWidget = ({
           message: "Неверный код",
         });
       }
+      throw e;
     }
   });
 

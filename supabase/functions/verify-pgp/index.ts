@@ -73,8 +73,9 @@ Deno.serve(async (req) => {
       .eq("username", username);
     await supabase.from("challenges").delete().eq("id", challengeId);
 
-    return new Response(JSON.stringify({ status: "success" }), {
+    return newResponse({
       status: 200,
+      body: { status: "success" },
     });
   } catch (error) {
     return newResponse({

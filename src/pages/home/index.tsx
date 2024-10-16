@@ -8,7 +8,6 @@ import { Button } from "@/shared/ui/button";
 export const HomePage = observer(() => {
   const { authStore } = useStore();
 
-  console.log(authStore.isAuth);
   if (!authStore.isAuth) {
     return <Redirect to={ROUTES.signIn} />;
   }

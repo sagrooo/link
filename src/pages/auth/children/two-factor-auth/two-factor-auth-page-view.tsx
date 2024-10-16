@@ -16,20 +16,25 @@ export const TwoFactorAuthPage = observer(() => {
 
     const { username, twoFactorType, secret } = authStore.user;
 
-    const verifyRequest =
-      twoFactorType === TwoFactorType.Google
-        ? googleAuthStore.verify
-        : pgpAuthStore.verify;
+    const isGoogle = twoFactorType === TwoFactorType.Google;
+
+    const verifyRequest = isGoogle
+      ? googleAuthStore.verify
+      : pgpAuthStore.verify;
+
+    const getSecret = async (): Promise<string> =>
+      isGoogle ? secret : pgpAuthStore.getStoredArmoredPrivateKey(otp);
 
     try {
       await verifyRequest({
         otp,
-        secret,
+        secret: await getSecret(),
         username,
       });
+
       authStore.authenticateUser();
     } catch (e) {
-      console.error(e);
+      throw e;
     }
   };
 
@@ -38,6 +43,8 @@ export const TwoFactorAuthPage = observer(() => {
   }
 
   const isLoading = googleAuthStore.isLoading || pgpAuthStore.isLoading;
+
+  //Todo Если отсутсвует armoredPrivateKey в LS, показывать окно ввода приватного ключа
 
   return (
     <VerifyOtpCodeWidget

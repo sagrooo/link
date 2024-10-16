@@ -1,5 +1,5 @@
 type VerifyProps = {
-  secret: string;
+  secret: string | null;
   otp: string;
   username: string;
 };

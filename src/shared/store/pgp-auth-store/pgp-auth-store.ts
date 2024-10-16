@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import { createMessage, decryptKey, readPrivateKey, sign } from "openpgp";
 
 import { functionsMapError } from "@/shared/lib/functions-map-error";
 import { supabase } from "@/shared/services/supabase-client";
@@ -11,19 +12,14 @@ import {
 } from "./_types";
 import { decryptPrivateKey } from "./_utils/decrypt-private-key.ts";
 import { encryptPrivateKey } from "./_utils/encrypt-private-key.ts";
-import { signChallenge } from "./_utils/sign-challenge.ts";
 
 export class PgpAuthStore implements ImplPgpAuthStore {
   step: PgpAuthStep = PgpAuthStep.PublicKey;
 
   isLoading = false;
 
-  privateKeyArmored: any;
-
   constructor() {
     makeAutoObservable(this);
-
-    this.privateKeyArmored = localStorage.getItem("pgpPrivateKey");
   }
 
   savePublicKey: ImplPgpAuthStore["savePublicKey"] = async ({
@@ -160,7 +156,6 @@ export class PgpAuthStore implements ImplPgpAuthStore {
 
     if (createChallengeError) {
       await functionsMapError(createChallengeError);
-      return;
     }
 
     const storedKey = await this.getStoredArmoredPrivateKey(passphrase);
@@ -169,12 +164,19 @@ export class PgpAuthStore implements ImplPgpAuthStore {
       throw new Error("Приватный ключ не найден");
     }
 
-    console.log("armoredKey", armoredKey);
-
-    return signChallenge({
+    const privateKeyObj = await readPrivateKey({
       armoredKey,
-      challenge,
+    });
+
+    const decryptedPrivateKey = await decryptKey({
+      privateKey: privateKeyObj,
       passphrase,
+    });
+
+    return sign({
+      message: await createMessage({ text: challenge }),
+      signingKeys: decryptedPrivateKey,
+      detached: true,
     });
   };
 }

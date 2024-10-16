@@ -1,3 +1,5 @@
+import { WebStream } from "openpgp";
+
 type VerifyProps = {
   secret: string;
   otp: string;
@@ -28,7 +30,7 @@ export type CreateAndSignProps = {
 };
 
 export type VerifySignedMessageProps = {
-  username: string;
+  username: WebStream<string>;
   signedMessage?: string;
 };
 

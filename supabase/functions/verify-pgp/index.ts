@@ -7,7 +7,7 @@ import { newResponse } from "../_shared/new-response.ts";
 import { supabase } from "../_shared/supabase-client.ts";
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { readKey, readMessage } from "npm:openpgp";
+import { createMessage, readKey, readSignature, verify } from "npm:openpgp";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -51,20 +51,16 @@ Deno.serve(async (req) => {
       });
     }
 
-    const publicKey = readKey({ armoredKey: user.secret });
-    console.log();
-    const message = await readMessage({ armoredMessage: signedMessage });
-    const verified = await publicKey.verify(message);
+    const publicKey = user.secret;
 
-    if (!verified) {
-      return newResponse({
-        status: 400,
-        body: { code: "invalid_signature", message: "Неверная подпись" },
-      });
-    }
+    const publicKeyObj = await readKey({ armoredKey: publicKey });
+    const { data } = await verify({
+      message: await createMessage({ text: challenge }),
+      signature: await readSignature({ armoredSignature: signedMessage }),
+      verificationKeys: publicKeyObj,
+    });
 
-    const signedContent = message.getText().trim();
-    if (signedContent !== challenge) {
+    if (data !== challenge) {
       return newResponse({
         status: 400,
         body: { code: "invalid_challenge", message: "Вызов не совпадает" },

@@ -44,13 +44,13 @@ Deno.serve(async (req) => {
         password: passwordHash,
         email,
       })
-      .select("username, email, isEnabledTwoFA")
+      .select("username, email")
       .single();
 
     if (insertError) {
       return newResponse({
         status: 400,
-        body: { code: "internal_error", message: "Failed to create user." },
+        body: { code: "internal_error", message: insertError },
       });
     }
 

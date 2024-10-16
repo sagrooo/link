@@ -15,7 +15,6 @@ Deno.serve(async (req) => {
   }
 
   const { signedMessage, username } = await req.json();
-  console.log({ signedMessage, username });
 
   try {
     const { data: user, error: userError } = await supabase
@@ -53,7 +52,7 @@ Deno.serve(async (req) => {
     }
 
     const publicKey = readKey({ armoredKey: user.secret });
-
+    console.log();
     const message = await readMessage({ armoredMessage: signedMessage });
     const verified = await publicKey.verify(message);
 
@@ -71,6 +70,11 @@ Deno.serve(async (req) => {
         body: { code: "invalid_challenge", message: "Вызов не совпадает" },
       });
     }
+
+    await supabase
+      .from("users")
+      .update({ twoFactorType: "pgp" })
+      .eq("username", username);
     await supabase.from("challenges").delete().eq("id", challengeId);
 
     return new Response(JSON.stringify({ status: "success" }), {

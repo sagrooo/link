@@ -1,6 +1,8 @@
 import { observer } from "mobx-react";
 import { useState } from "react";
+import { useHistory } from "react-router";
 
+import { ROUTES } from "@/shared/_constants.ts";
 import { useStore } from "@/shared/hooks";
 import { PgpAuthStep } from "@/shared/store/pgp-auth-store/_types.ts";
 import { CopyTextButton } from "@/shared/ui/copy-text-button.tsx";
@@ -11,35 +13,43 @@ import { FormValues } from "./_types.ts";
 
 export const ConfigurePgpAuthWidget = observer(() => {
   const { authStore, pgpAuthStore } = useStore();
-  const [privateKey, setPrivateKey] = useState<string>("");
+  const [privateKeyConfig, setPrivateKeyConfig] = useState<FormValues | null>(
+    null,
+  );
+  const history = useHistory();
 
   const username = authStore.user?.username || "";
 
   const handleSetPublicKey = async ({ key: publicKey }: FormValues) => {
-    pgpAuthStore.savePublicKey({
+    await pgpAuthStore.savePublicKey({
       publicKey,
       username,
     });
   };
 
-  const handleSavePrivateKey = ({
-    key: privateKey,
-    isSavePrivateKey,
-  }: FormValues) => {
-    setPrivateKey(privateKey);
-
-    if (isSavePrivateKey) {
-    }
-
+  const handleSavePrivateKey = ({ key, isSavePrivateKey }: FormValues) => {
+    setPrivateKeyConfig({
+      key,
+      isSavePrivateKey,
+    });
     pgpAuthStore.setStep(PgpAuthStep.EnterPassphrase);
   };
 
-  const handleEncryptKey = (passphrase: string) => {
-    void pgpAuthStore.verify({
+  const handleEncryptKey = async (passphrase: string) => {
+    if (privateKeyConfig === null) {
+      return;
+    }
+
+    const { key: secret, isSavePrivateKey = false } = privateKeyConfig;
+
+    await pgpAuthStore.verify({
       username,
-      secret: privateKey,
+      secret,
       otp: passphrase,
+      isSaveToStore: isSavePrivateKey,
     });
+
+    history.push(ROUTES.signIn);
   };
 
   switch (pgpAuthStore.step) {

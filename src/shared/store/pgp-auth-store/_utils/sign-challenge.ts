@@ -17,13 +17,13 @@ export const signChallenge = async ({
   challenge,
 }: Props) => {
   const privateKey = await readPrivateKey({ armoredKey });
-
   const decryptedPrivateKey = await decryptKey({
     privateKey,
     passphrase,
   });
 
   const message = await createCleartextMessage({ text: challenge });
+
   return sign({
     message,
     signingKeys: decryptedPrivateKey,

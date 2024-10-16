@@ -37,12 +37,14 @@ export const TwoFactorAuthPage = observer(() => {
     return <Redirect to={ROUTES.signIn} />;
   }
 
+  const isLoading = googleAuthStore.isLoading || pgpAuthStore.isLoading;
+
   return (
     <VerifyOtpCodeWidget
       titleText={"Введите код из вашего 2FA приложения"}
       buttonText={"Войти"}
       onVerify={handleVerify}
-      isLoading={googleAuthStore.isLoading}
+      isLoading={isLoading}
     />
   );
 });

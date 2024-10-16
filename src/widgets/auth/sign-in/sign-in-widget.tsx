@@ -62,6 +62,7 @@ export const SignInWidget = observer(() => {
             label={"Имя пользователя"}
           >
             <SimpleInput
+              autoComplete="username"
               onBlur={field.onBlur}
               onChange={field.onChange}
               value={field.value}
@@ -76,6 +77,7 @@ export const SignInWidget = observer(() => {
         render={({ field }) => (
           <FormField error={errors[FormFieldNames.Password]} label={"Пароль"}>
             <PasswordInput
+              autoComplete="current-password"
               onBlur={field.onBlur}
               onChange={field.onChange}
               value={field.value}

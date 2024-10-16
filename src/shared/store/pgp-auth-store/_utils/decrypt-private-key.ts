@@ -1,5 +1,3 @@
-import { decryptKey } from "openpgp";
-
 import {
   EncryptedData,
   base64ToUint8Array,
@@ -26,18 +24,5 @@ export const decryptPrivateKey = async ({
 
   const encryptionKey = await deriveEncryptionKey(passphrase, salt);
 
-  const decryptedPrivateKey = await decryptData(
-    encryptedPrivateKeyBuffer,
-    encryptionKey,
-    iv,
-  );
-
-  const privateKey = await readPrivateKey({
-    armoredKey: decryptedPrivateKey,
-  });
-
-  return decryptKey({
-    privateKey,
-    passphrase,
-  });
+  return decryptData(encryptedPrivateKeyBuffer, encryptionKey, iv);
 };
